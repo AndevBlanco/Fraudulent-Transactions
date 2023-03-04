@@ -1,11 +1,13 @@
-from dotenv import load_dotenv
-import os
-from pymongo import MongoClient
 import pandas as pd
+import numpy as np
+from scipy import stats
+from config import MongoDatabase
 
-load_dotenv()
+database = MongoDatabase('FraudulentTransactionsProject', 'transactions')
 
-client = MongoClient(os.getenv("DB_URI"))
+print(database.collection.find())
+for i in database.collection.find():
+    print(i)
 
 # Extract data from the CSV file
 df = pd.read_csv('Fraud.csv')
@@ -13,6 +15,8 @@ df = pd.read_csv('Fraud.csv')
 
 # Transform data
 df = df.dropna()
+
+# df[(np.abs(stats.zscore(df)) < 3).all(axis=1)]
 
 
 print(df)
