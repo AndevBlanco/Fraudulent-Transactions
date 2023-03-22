@@ -1,49 +1,55 @@
 import pandas as pd
-import numpy as np
-from scipy import stats
+import pymongo
 from config import MongoDatabase
+from etl import extract, transform
 
-# database = MongoDatabase('FraudulentTransactionsProject', 'transactions')
+database = MongoDatabase('FraudulentTransactionsProject', 'transactions')
 
-# Extract data from the CSV file
-transactionsDataExtracted = pd.read_csv('Fraud_test.csv')
-dtype = {
-    "step": int,
-    "type": "string",
-    "amount": float,
-    "nameOrig": "string",
-    "oldbalanceOrg": float,
-    "newbalanceOrig": float,
-    "nameDest": "string",
-    "oldbalanceDest": float,
-    "newbalanceDest": float,
-    "isFraud": float,
-    "isFlaggedFraud": float
-    }
+# Extraction and transform process
+# transactionsDataExtracted = extract('Fraud.csv')
+# transactionsDataTransformed = transform(transactionsDataExtracted)
+# print("Data cleaned...")
 
-# Transform data
-# Check for null values in step column
-if transactionsDataExtracted.isnull().values.any():
-    print("Some columns contains null values")
-    print("Cleaning up...")
-    transactionsDataExtracted = transactionsDataExtracted.dropna()
+# Transform dataframe to dict and add index
+# transactionsDataTransformed.reset_index(inplace=True)
+# transactionsDataTransformed_dict = transactionsDataTransformed.iloc[:1500000].to_dict("records")
+# print(transactionsDataTransformed_dict[0])
 
-# Check for just integer values in step column
-def checkAndCleanNotNumericValues(column):
-    transactionsDataExtractedNotNumericValues = transactionsDataExtracted
-    if pd.to_numeric(transactionsDataExtracted[column], errors='coerce').notnull().all() == False:
-        print(f"{column} column contains not integer values")
-        print("Cleaning up...")
-        transactionsDataExtractedNotNumericValues = transactionsDataExtracted[pd.to_numeric(transactionsDataExtracted[column], errors='coerce').notnull()]
+# Insert all documents in collection
+# database.collection.insert_many(transactionsDataTransformed_dict)
 
-    return transactionsDataExtractedNotNumericValues
+# Delete all documents in collection
+# database.collection.delete_many({})
 
+database.collection.create_index('isFraud')
+database.collection.create_index('amount')
+database.collection.create_index('isFlaggedFraud')
+database.collection.create_index('type')
+exp = database.collection.find({'isFraud': 1}).explain()
 
-for i in dtype:
-    if dtype[i] != "string":
-        transactionsDataExtracted = checkAndCleanNotNumericValues(i)
+# Total sum fraudulent transactions
+pipeline = [
+    {"$match": {"isFraud": 1}},
+    {"$group": {"_id": None, "total": {"$sum": "$amount"}}}
+]
+result = database.collection.aggregate(pipeline)
+print(list(result))
 
-print(transactionsDataExtracted)
+# Avg fraudulent transactions
+pipeline = [
+    {"$group": {"_id": "$type", "avg_amount": {"$avg": "$amount"}}}
+]
+result = database.collection.aggregate(pipeline)
+print(list(result))
 
+# Transactions number by type
+pipeline = [
+    {"$match": {"isFraud": 1}},
+    {"$group": {"_id": "$type", "count": {"$sum": 1}}}
+]
+result = database.collection.aggregate(pipeline)
+print(list(result))
 
-# df[(np.abs(stats.zscore(df)) < 3).all(axis=1)]
+transacciones_fraudulentas = database.collection.find({"amount": {"$gte": 1000000000}, "isFraud": 1})
+for i in transacciones_fraudulentas:
+    print(i)
