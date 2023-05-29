@@ -6,6 +6,8 @@ from cleaning import Cleaning
 from optimization import Optimization
 from queries import Queries
 from model import Model
+import time
+
 
 database = MongoDatabase('FraudulentTransactionsProject', 'transactions')
 dataset_ref = 'Fraud.csv'
@@ -16,10 +18,19 @@ class App:
             Cleaning(dataset_ref, database)
         
         if "optimize" in args and args["optimize"]:
+            # Apply optimization to improve queries performance
             Optimization(database)
+            start_time = time.time()
+
+            Queries(database)
+            end_time = time.time()
+            print("Execution time:", end_time - start_time, "seconds")
 
         if "queries" in args and args["queries"]:
+            start_time = time.time()
             Queries(database)
+            end_time = time.time()
+            print("Execution time:", end_time - start_time, "seconds")
 
         if "model" in args and args["model"]:
             Model(database)
