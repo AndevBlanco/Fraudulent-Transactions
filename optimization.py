@@ -4,4 +4,10 @@ class Optimization:
         database.collection.create_index('amount')
         database.collection.create_index('isFlaggedFraud')
         database.collection.create_index('type')
-        exp = database.collection.find({'isFraud': 1}).explain()
+        result = database.collection.find({'isFraud': 1}).explain()
+        execution_stats = result['executionStats']
+        winning_plan = result['queryPlanner']['winningPlan']
+        index_used = result['queryPlanner'].get('winningPlan', {}).get('inputStage', {}).get('indexName')
+        print("Execution statistics:", execution_stats)
+        print("Winning execution plan:", winning_plan)
+        print("Used index:", index_used)
