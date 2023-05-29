@@ -41,15 +41,15 @@ class Queries:
         # 100 Largest fraudulent transactions
         pipeline = [
             {"$match": {"isFraud": 1}},
-            { "$sort": {"amount": -1 } },  # Ordenar los documentos por el campo 'amount' de forma descendente
-            { "$limit": 100 },             # Limitar los resultados a los primeros 100 documentos
-            { "$project": { "_id": 0, "amount": 1, "nameOrig": 1 } }  # Proyectar solo los campos 'amount' y 'nameOrig' en el resultado
+            { "$sort": {"amount": -1 } },                              
+            { "$limit": 100 },                                         
+            { "$project": { "_id": 0, "amount": 1, "nameOrig": 1 } } 
         ]
         result = database.collection.aggregate(pipeline)
-        print("Los 100 mas grandes: ")
+        print("100 Largest fraudulent transactions: ")
         print(list(result))
 
-        # 
+        # Group by biggest amount
         pipeline = [
             {"$match": {"isFraud": 1}},
             {"$group": {"_id": "$amount", "count": {"$sum": 1}}},
@@ -57,15 +57,15 @@ class Queries:
             { "$limit": 10 }
         ]
         result = database.collection.aggregate(pipeline)
-        print("De mayor a menor: ")
+        print("From less to high: ")
         print(list(result))
 
-        #
+        #Maximun and minimun
         pipeline = [
             {"$match": {"isFraud": 1}},
             {"$group": {"_id": None, "maxAmount": { "$max": "$amount"}}}
         ]
-        print("Maximo: ")
+        print("Maximun: ")
         result = database.collection.aggregate(pipeline)
         print(list(result))
 
@@ -73,7 +73,7 @@ class Queries:
             {"$match": {"isFraud": 1}},
             {"$group": {"_id": None, "minAmount": { "$min": "$amount"}}}
         ]
-        print("Minimo: ")
+        print("Minimun: ")
         result = database.collection.aggregate(pipeline)
         print(list(result))
 
