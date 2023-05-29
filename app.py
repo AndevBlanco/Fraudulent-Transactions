@@ -10,10 +10,6 @@ from model import Model
 database = MongoDatabase('FraudulentTransactionsProject', 'transactions')
 dataset_ref = 'Fraud.csv'
 
-# Get the data from db and convert to dataframe
-# df = pd.DataFrame(list(database.collection.find().limit(100000)))
-# print(df.describe())
-
 class App:
     def __init__(self, args):
         if "clean" in args and args["clean"]:
@@ -35,5 +31,4 @@ if __name__ == "__main__":
     parser.add_argument("-q", "--queries", dest="queries", help="Execute queries to database", required=False, action="store_true")
     parser.add_argument("-m", "--model", dest="model", help="Run the model and make the prediction", required=False, action="store_true")
     args = vars(parser.parse_args())
-    print(args)
     app = App(args)
