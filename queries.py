@@ -57,7 +57,7 @@ class Queries:
             { "$limit": 10 }
         ]
         result = database.collection.aggregate(pipeline)
-        print("From less to high: ")
+        print("From high to less: ")
         print(list(result))
 
         #Maximun and minimun
