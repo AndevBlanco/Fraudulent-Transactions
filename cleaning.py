@@ -1,7 +1,12 @@
 import pandas as pd
+import re
 
 class Cleaning:
     def __init__(self, dataset_ref, database):
+        # Delete all documents in collection
+        database.collection.delete_many({})
+        print("Dropping database...")
+
         # Extraction and transform process
         self.extract(dataset_ref)
         self.transform()
@@ -11,9 +16,6 @@ class Cleaning:
         self.dataset.reset_index(inplace=True)
         transactionsDataTransformed_dict = self.dataset.iloc[:1000000].to_dict("records")
         print(transactionsDataTransformed_dict[0])
-
-        # Delete all documents in collection
-        # database.collection.delete_many({})
 
         # Insert all documents in collection
         database.collection.insert_many(transactionsDataTransformed_dict)
@@ -40,13 +42,19 @@ class Cleaning:
             "isFraud": float,
             "isFlaggedFraud": float
             }
-        # Check for null values in step column
+        # Check for null values in columns and remove them
         if self.dataset.isnull().values.any():
             print("Some columns contains null values")
             print("Cleaning up...")
             self.dataset = self.dataset.dropna()
 
+        # Remove duplicates
         self.dataset = self.dataset.drop_duplicates()
+        print(self.dataset.shape[0])
+
+        # Remove transfer less than 10
+        self.dataset = self.dataset[~self.dataset['amount'].astype(str).str.contains(r'^\d{0,1}\.')]
+        print(self.dataset.shape[0])
 
         transactionsDataExtractedNotNumericValues = self.dataset
         # Check that numeric columns have only numeric values
