@@ -12,7 +12,7 @@
 
 **Run project**
 
-`py app.py -c | -o | -q | -m`
+`py app.py -c | -o | -q | -m [Model]`
 
 **`-c | --clean`**  Clean the dataset (CSV file)
 
@@ -20,4 +20,4 @@
 
 **`-q | --queries`**  Run queries to database
 
-**`-m | --mode`**  Create and run the prediction model
+**`-m [cl, lr] | --model [classifier, logistic regression]`**  Create and run the prediction model

@@ -33,13 +33,13 @@ class App:
             print("Execution time:", end_time - start_time, "seconds")
 
         if "model" in args and args["model"]:
-            Model(database)
+            Model(database, args['model'])
 
 if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument("-c", "--clean", dest="clean", help="Clean the csv data", required=False, action="store_true")
     parser.add_argument("-o", "--optimize", dest="optimize", help="Optimize database", required=False, action="store_true")
     parser.add_argument("-q", "--queries", dest="queries", help="Execute queries to database", required=False, action="store_true")
-    parser.add_argument("-m", "--model", dest="model", help="Run the model and make the prediction", required=False, action="store_true")
+    parser.add_argument("-m", "--model", choices=['cl', 'lr'], help="Run the model and make the prediction", required=False)
     args = vars(parser.parse_args())
     app = App(args)

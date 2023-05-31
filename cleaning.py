@@ -9,14 +9,15 @@ class Cleaning:
 
         # Transform dataframe to dict and add index
         self.dataset.reset_index(inplace=True)
-        transactionsDataTransformed_dict = self.dataset.iloc[:1500000].to_dict("records")
+        transactionsDataTransformed_dict = self.dataset.iloc[:1000000].to_dict("records")
         print(transactionsDataTransformed_dict[0])
-
-        # Insert all documents in collection
-        database.collection.insert_many(transactionsDataTransformed_dict)
 
         # Delete all documents in collection
         # database.collection.delete_many({})
+
+        # Insert all documents in collection
+        database.collection.insert_many(transactionsDataTransformed_dict)
+        print("Data uploaded!")
 
 
     # Extract data from the CSV file
@@ -45,8 +46,10 @@ class Cleaning:
             print("Cleaning up...")
             self.dataset = self.dataset.dropna()
 
+        self.dataset = self.dataset.drop_duplicates()
+
         transactionsDataExtractedNotNumericValues = self.dataset
-        # Check for just integer values in step column
+        # Check that numeric columns have only numeric values
         for i in data_types:
             if data_types[i] != "string":
                 if pd.to_numeric(self.dataset[i], errors='coerce').notnull().all() == False:
