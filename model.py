@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 class Model:
     def __init__(self, database, model):
         # Get the data from db and convert to dataframe
-        dataframe = pd.DataFrame(list(database.collection.find()))
+        dataframe = pd.DataFrame(list(database.collection.find().limit(10000)))
         print(dataframe.describe())
 
         # Convert 'type' categorical variable into numerical dummy variables
