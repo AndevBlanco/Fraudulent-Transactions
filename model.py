@@ -9,9 +9,9 @@ from sklearn.metrics import plot_confusion_matrix
 import matplotlib.pyplot as plt
 
 class Model:
-    def __init__(self, database, model):
+    def __init__(self, database):
         # Get the data from db and convert to dataframe
-        dataframe = pd.DataFrame(list(database.collection.find().limit(10000)))
+        dataframe = pd.DataFrame(list(database.collection.find().limit(100000)))
         print(dataframe.describe())
 
         # Convert 'type' categorical variable into numerical dummy variables
@@ -30,38 +30,21 @@ class Model:
 
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
 
-        if model == 'lr':
-            # Model 1: logistic regression
-            logisticRegressionModel = LogisticRegression(max_iter=1000)
+        # Model 1: logistic regression
+        logisticRegressionModel = LogisticRegression(max_iter=1000)
 
-            # Train the Logistic Regression model
-            logisticRegressionModel.fit(X_train, y_train)
+        # Train the Logistic Regression model
+        logisticRegressionModel.fit(X_train, y_train)
 
-            # Make predictions on the training set
-            train_preds = logisticRegressionModel.predict_proba(X_train)[:, 1]
-            print('Training Accuracy Logistic Regression: ', ras(y_train, train_preds))
-            
-            # Make predictions on the validation set
-            y_preds = logisticRegressionModel.predict_proba(X_test)[:, 1]
-            print('Validation Accuracy Logistic Regression: ', ras(y_test, y_preds))
-            plot_confusion_matrix(logisticRegressionModel, X_test, y_test)
+        # Make predictions on the training set
+        train_preds = logisticRegressionModel.predict_proba(X_train)[:, 1]
+        print('Training Accuracy Logistic Regression: ', ras(y_train, train_preds))
+        
+        # Make predictions on the validation set
+        y_preds = logisticRegressionModel.predict_proba(X_test)[:, 1]
+        print('Validation Accuracy Logistic Regression: ', ras(y_test, y_preds))
+        plot_confusion_matrix(logisticRegressionModel, X_test, y_test)
 
-        else:
-            # Model 2: XGB classifier
-            XGBClassifierModel = XGBClassifier()
-
-            # Train the Logistic Regression model
-            XGBClassifierModel.fit(X_train, y_train)
-
-            # Make predictions on the training set
-            train_preds = XGBClassifierModel.predict_proba(X_train)[:, 1]
-            print('Training Accuracy XGB Classifier: ', ras(y_train, train_preds))
-            
-            # Make predictions on the validation set
-            y_preds = XGBClassifierModel.predict_proba(X_test)[:, 1]
-            print('Validation Accuracy XGB Classifier: ', ras(y_test, y_preds))
-
-            plot_confusion_matrix(XGBClassifierModel, X_test, y_test)
 
         plt.show()
 
