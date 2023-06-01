@@ -45,7 +45,6 @@ class Model:
         print('Validation Accuracy Logistic Regression: ', ras(y_test, y_preds))
         plot_confusion_matrix(logisticRegressionModel, X_test, y_test)
 
-
         plt.show()
 
 

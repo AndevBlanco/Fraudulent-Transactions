@@ -4,8 +4,8 @@ import re
 class Cleaning:
     def __init__(self, dataset_ref, database):
         # Delete all documents in collection
-        print("Dropping database...")
-        database.collection.delete_many({})
+        #print("Dropping database...")
+        #database.collection.delete_many({})
 
         # Extraction and transform process
         self.extract(dataset_ref)
@@ -17,8 +17,8 @@ class Cleaning:
         # transactionsDataTransformed_dict = self.dataset.iloc[:1000000].to_dict("records")
 
         # Insert all documents in collection
-        database.collection.insert_many(transactionsDataTransformed_dict)
-        print("Data uploaded!")
+        #database.collection.insert_many(transactionsDataTransformed_dict)
+        #print("Data uploaded!")
 
 
     # Extract data from the CSV file
