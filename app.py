@@ -3,6 +3,7 @@ import pymongo
 from config import MongoDatabase
 from argparse import ArgumentParser
 from cleaning import Cleaning
+from charts import Charts
 from optimization import Optimization
 from queries import Queries
 from model import Model
